@@ -304,16 +304,12 @@ class CommentForm(ModelForm):
 # views.py
 from .forms import CommentForm
 
-# def detail(request, id):
-#     article = Article.objects.get(id=id)
+def detail(request, id):
     form = CommentForm()
 
-#     context = {
-#         'article': article,
+    context = {
         'form': form,
-#     }
-
-#     return render(request, 'detail.html', context)
+    }
 ```
 ```html
 <!-- detail.html -->
@@ -376,10 +372,10 @@ class Comment(models.Model):
 ```python
 # views.py
 def detail(request, id):
-    comments = article.comment_set.all() # Comment Read
+    comments = article.comment_set.all()
 
     context = {
-        'comments': comments, # Comment Read
+        'comments': comments,
         }
 ```
 ```html
@@ -390,4 +386,24 @@ def detail(request, id):
 {% for comment in comments %}
     <li>{{comment.content}}</li>
 {% endfor %}
+```
+
+## 11. Comment Delete
+```html
+<!-- detail.html -->
+<a href="{% url 'articles:comment_delete' article.id comment.id %}">delete</a>
+```
+```python
+# urls.py
+path('<int:article_id>/comments/<int:id>/delete', views.comment_delete, name='comment_delete')
+```
+```python
+# views.py
+from .models import Article, Comment
+
+def comment_delete(request, article_id, id):
+    comment = Comment.objects.get(id=id)
+    comment.delete()
+
+    return redirect('articles:detail', id=article_id)
 ```
