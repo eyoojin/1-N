@@ -7,5 +7,14 @@
     <p>{{article.updated_at}}</p>
 
     <a href="{% url 'articles:update' article.id %}">🦥</a>
-    <a href="{% url 'articles:delete' article.id %}">🐰</a>
+    <a href="{% url 'articles:delete' article.id %}">🐹</a>
+
+    <hr>
+
+    <form action="{% url 'articles:comment_create' article.id %}" method="POST">
+        {% csrf_token %}
+        {{form}}
+        <input type="submit">
+    </form>
+
 {% endblock %}

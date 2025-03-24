@@ -274,7 +274,7 @@ def delete(request, id):
 
 # 댓글 기능 구현
 
-## 8. 
+## 8. Comment modeling, migration
 - Comment modeling
 ```python
 # model.py
@@ -288,3 +288,78 @@ class Comment(models.Model):
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+## 9. Comment Create
+- GET 요청
+```python
+# forms.py
+from .models import Comment
+
+class CommentForm(ModelForm):
+    class Meta():
+        model = Comment
+        fields = '__all__'
+```
+```python
+# views.py
+from .forms import CommentForm
+
+# def detail(request, id):
+#     article = Article.objects.get(id=id)
+    form = CommentForm()
+
+#     context = {
+#         'article': article,
+        'form': form,
+#     }
+
+#     return render(request, 'detail.html', context)
+```
+```html
+<!-- detail.html -->
+<hr>
+{{form}}
+```
+```python
+# forms.py
+class CommentForm(ModelForm):
+    class Meta():
+        model = Comment
+        # fields = '__all__'
+
+        # 둘 중에 하나 선택
+        fields = ('content', ) # 추가할 필드 목록
+        exclude = ('article', ) # 제외할 필드 목록
+```
+```html
+<!-- detail.html -->
+<form action="{% url 'articles:comment_create' article.id %}" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit">
+</form>
+```
+- POST 요청
+```python
+# urls.py
+path('<int:article_id>/comments/create/', views.comment_create, name='comment_create')
+```
+```python
+# views.py
+def comment_create(request, article_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            # commit: 데이터베이스에 완전히 저장 -> False: 임시 저장
+            # comment의 article_id 값이 비어있으므로 먼저 찾아야 함
+            article = Article.objects.get(id=article_id)
+            comment.article = article
+            comment.save()
+
+            return redirect('articles:detail', id=article_id)
+
+    else:
+        return redirect('articles:index')
+```
+
