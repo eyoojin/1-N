@@ -5,4 +5,6 @@
     <p>{{article.content}}</p>
     <p>{{article.created_at}}</p>
     <p>{{article.updated_at}}</p>
+
+    <a href="{% url 'articles:update' article.id %}">🦥</a>
 {% endblock %}

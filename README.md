@@ -153,6 +153,7 @@ def index(request):
 {% block body %}
     {% for article in articles %}
         <h3>{{article.title}}</h3>
+        <hr>
     {% endfor %}
 {% endblock %}
 ```
@@ -176,4 +177,79 @@ def detail(detail, id):
     }
 
     return render(request, 'detail.html', context)
+```
+```html
+<!-- detail.html -->
+{% extends 'base.html' %}
+
+{% block body %}
+    <h3>{{article.title}}</h3>
+    <p>{{article.content}}</p>
+    <p>{{article.created_at}}</p>
+    <p>{{article.updated_at}}</p>
+{% endblock %}
+```
+
+## 6. Update
+```html
+<!-- detail.html -->
+<a href="{% url 'articles:update' article.id %}">update</a>
+```
+```python
+# urls.py
+path('<int:id>/update/', views.update, name='update')
+```
+- 기존 정보 출력
+```python
+# views.py
+def update(request, id):
+    if request.method == 'POST':
+        pass
+    else: 
+        article = Article.objects.get(id=id) # 이전에 있던 정보
+        form = ArticleForm(instance=article)
+    
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'update.html', context)
+```
+```html
+<!-- update.html -->
+{% extends 'base.html' %}
+
+{% block body %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form}}
+        <input type="submit">
+    </form>
+{% endblock %}
+```
+- 새로운 정보 저장
+```python
+# views.py
+def update(request, id):
+    article = Article.objects.get(id=id) # 이전에 있던 정보
+    # 중복 코드 위로 빼기
+
+    if request.method == 'POST':
+        # article = Article.objects.get(id=id)
+        form = ArticleForm(request.POST, instance=article)
+        # (새로운 정보, 기존 정보)
+        if form.is_valid():
+            form.save()
+            # return redirect('articles:index')
+            return redirect('articles:detail', id=id)
+
+    else: 
+        # article = Article.objects.get(id=id)
+        form = ArticleForm(instance=article)
+    
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'update.html', context)
 ```
