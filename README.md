@@ -363,3 +363,31 @@ def comment_create(request, article_id):
         return redirect('articles:index')
 ```
 
+## 10. Comment Read
+```python
+# models.py
+class Article(models.Model):
+    # comment_set => article을 이용해 comment에 접근
+
+class Comment(models.Model):
+    # article_id => comment를 이용해 article에 접근
+    # DB에는 article_id 저장/ article 객체를 저장할 필요 없기 때문에
+```
+```python
+# views.py
+def detail(request, id):
+    comments = article.comment_set.all() # Comment Read
+
+    context = {
+        'comments': comments, # Comment Read
+        }
+```
+```html
+<!-- detail.html -->
+
+<!-- for comment in article.comment_set.all -->
+<!-- 게시물정보.하위항목 정보.모두 가져오기 -->
+{% for comment in comments %}
+    <li>{{comment.content}}</li>
+{% endfor %}
+```

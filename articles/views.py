@@ -29,11 +29,13 @@ def index(request):
 
 def detail(request, id):
     article = Article.objects.get(id=id)
+    comments = article.comment_set.all() # Comment Read
     form = CommentForm() # Comment
 
     context = {
         'article': article,
         'form': form, # Comment
+        'comments': comments, # Comment Read
     }
 
     return render(request, 'detail.html', context)
