@@ -399,7 +399,7 @@ path('<int:article_id>/comments/<int:id>/delete', views.comment_delete, name='co
 ```
 ```python
 # views.py
-from .models import Article, Comment
+from .models import Comment
 
 def comment_delete(request, article_id, id):
     comment = Comment.objects.get(id=id)
