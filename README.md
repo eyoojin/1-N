@@ -21,7 +21,7 @@ django-admin startapp articles
 INSTALLED_APPS = ['articles']
 ```
 
-## 2. 공통 html
+## 2. 공통 html 구조 작성
 - ../templates.'base.html'
 ```python
 # settings.py
@@ -33,7 +33,7 @@ TEMPLATES = [{'DIRS': [BASE_DIR / 'templates']}]
 {% endblock %}
 ```
 
-## 3.
+## 3. modeling, migration
 - modeling
 ```python
 # models.py
@@ -47,4 +47,82 @@ class Article(models.Model):
 ```shell
 python manage.py makemigrations
 python manage.py migrate
+```
+
+## 4. Create
+- urls 설정
+```python
+# board/'urls.py'
+from django.urls import include
+
+urlpatterns = [path('articles/', include('articles.urls')),]
+```
+```python
+# articles/'urls.py'
+from django.urls import path
+from . import views
+
+app_name = 'articles'
+
+urlpatterns = [path('create/', views.create, name='create')]
+```
+- ModelFomr(ArticleForm) 생성
+```python
+# articles/'forms.py'
+from django.forms import ModelForm
+from .models import Article
+
+class ArticleForm(ModelForm):
+    class Meta():
+        model = Article
+        fields = '__all__'
+```
+- GET 요청 Create
+```python
+# views.py
+from .forms import ArticleForm
+
+def create(request):
+    if request.method == 'POST':
+        pass
+    else: # GET
+        form = ArticleForm()
+    
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'create.html', context)
+```
+```html
+<!-- articles/templates/'create.html' -->
+{% extends 'base.html' %}
+
+{% block body %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- 장고가 보증하는 -->
+        {{form}}
+        <input type="submit">
+    </form>
+{% endblock %}
+```
+- POST 요청 Create
+```python
+from django.shortcuts import redirect
+
+def create(request):
+    if request.method == 'POST':
+        form = ArticleForm(request.POST) # 사용자의 정보를 담은
+        if form.is_valid():
+            form.save()
+            return redirect('articles:index')
+    else: # GET
+        form = ArticleForm() # 비어있는
+    
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'create.html', context)
 ```
