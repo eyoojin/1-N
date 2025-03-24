@@ -126,3 +126,54 @@ def create(request):
 
     return render(request, 'create.html', context)
 ```
+
+## 5. Read
+- Read all
+```python
+# urls.py
+path('', views.index, name='index')
+```
+```python
+# views.py
+from .models import Article
+
+def index(request):
+    articles = Article.objects.all()
+
+    context = {
+        'articles': articles,
+    }
+
+    return render(request, 'index.html', context)
+```
+```html
+<!-- index.html -->
+{% extends 'base.html' %}
+
+{% block body %}
+    {% for article in articles %}
+        <h3>{{article.title}}</h3>
+    {% endfor %}
+{% endblock %}
+```
+
+- Read 1
+```html
+<!-- index.html -->
+<a href="{% url 'articles:detail' article.id %}">detail</a>
+```
+```python
+# urls.py
+path('<int:id>/', views.detail, name='detail')
+```
+```python
+# views.py
+def detail(detail, id):
+    article = Article.objects.get(id=id)
+
+    context = {
+        'article': article,
+    }
+
+    return render(request, 'detail.html', context)
+```

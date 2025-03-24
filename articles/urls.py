@@ -8,6 +8,8 @@ urlpatterns = [
     path('create/', views.create, name='create'),
 
     # Read
+    path('', views.index, name='index'),
+    path('<int:id>/', views.detail, name='detail'),
 
     # Update
 
