@@ -20,3 +20,31 @@ django-admin startapp articles
 # settings.py
 INSTALLED_APPS = ['articles']
 ```
+
+## 2. 공통 html
+- ../templates.'base.html'
+```python
+# settings.py
+TEMPLATES = [{'DIRS': [BASE_DIR / 'templates']}]
+```
+```html
+<!-- base.html -->
+{% block body %}
+{% endblock %}
+```
+
+## 3.
+- modeling
+```python
+# models.py
+class Article(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+```
+- migration
+```shell
+python manage.py makemigrations
+python manage.py migrate
+```
