@@ -253,3 +253,21 @@ def update(request, id):
 
     return render(request, 'update.html', context)
 ```
+
+## 7. Delete
+```html
+<!-- detail.html -->
+<a href="{% url 'articles:delete' article.id %}">delete</a>
+```
+```python
+# urls.py
+path('<int:id>/delete/', views.delete, name='delete'),
+```
+```python
+# views.py
+def delete(request, id):
+    article = Article.objects.get(id=id)
+    article.delete()
+
+    return redirect('articles:index')
+```
