@@ -20,8 +20,10 @@
     <hr>
 
     {% for comment in comments %}
-        <li>{{comment.content}}</li>
-        <a href="{% url 'articles:comment_delete' article.id comment.id %}">🦊</a>
+        <li>
+            {{comment.content}}
+            <a href="{% url 'articles:comment_delete' article.id comment.id %}">🦊</a>
+        </li>
     {% endfor %}
 
 {% endblock %}
